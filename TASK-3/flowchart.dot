@@ -1,0 +1,100 @@
+digraph HastaneSistemi {
+    // Grafiğin genel ayarları
+    rankdir=TB; // Yukarıdan aşağıya akış (Top to Bottom)
+    node [shape=box, style="filled", fillcolor="lightblue"]; // Düğüm varsayılan ayarları
+
+    // Başlangıç ve Bitiş Düğümleri
+    Start [label="BAŞLA", shape=oval, fillcolor="lightgreen"];
+    End [label="BİTİŞ", shape=oval, fillcolor="red"];
+
+    // Ana Döngü
+    Repeat [label="TEKRARLA: Ana Döngü", shape=rect, fillcolor="lightyellow"];
+    Start -> Repeat;
+
+    // Kimlik Doğrulama
+    TC_Gir [label="TC Kimlik No Gir", shape=parallelogram];
+    Repeat -> TC_Gir;
+
+    TC_Kontrol [label="TC NO Veritabanında Var mı?", shape=diamond, fillcolor="pink"];
+    TC_Gir -> TC_Kontrol;
+
+    // TC Doğruysa Akış
+    TC_Kontrol -> Islemler [label="EVET"];
+    Islemler [label="İşlem Seçimi (1-Randevu, 2-Tahlil)", shape=parallelogram];
+
+    // İşlem Kontrolü
+    Islem_Secim [label="Seçim = 1 mi?", shape=diamond, fillcolor="pink"];
+    Islemler -> Islem_Secim;
+    
+    // Geçersiz TC Akışı
+    TC_Kontrol -> Tekrar_Sor [label="HAYIR"];
+
+    // --- Randevu Modülü (Seçim 1) ---
+    Islem_Secim -> Randevu_AL_Func [label="EVET"];
+    
+    subgraph cluster_randevu {
+        label = "Randevu Alma Modülü";
+        style = "filled";
+        color = "grey";
+        
+        Randevu_AL_Func [label="Poliklinik Seçimi\nve Doktor Listesi", shape=box];
+        Saat_Bul [label="Uygun Saatleri Bul\n(Döngü)", shape=box];
+        Onay [label="Randevu Onayı?", shape=diamond];
+        SMS_Gonder [label="Randevu Kayıt & SMS Gönderimi", shape=box];
+        Iptal [label="Randevu İptal", shape=box];
+
+        Randevu_AL_Func -> Saat_Bul;
+        Saat_Bul -> Onay;
+        Onay -> SMS_Gonder [label="EVET"];
+        Onay -> Iptal [label="HAYIR"];
+        
+        SMS_Gonder -> Tekrar_Sor;
+        Iptal -> Tekrar_Sor;
+    }
+
+
+    // --- Tahlil Modülü (Seçim 2) ---
+    Islem_Secim -> Tahlil_Kontrol [label="HAYIR, Seçim = 2 mi?"];
+    
+    subgraph cluster_tahlil {
+        label = "Tahlil Sonucu Görüntüleme Modülü";
+        style = "filled";
+        color = "grey";
+
+        Tahlil_Kontrol [label="Hastaya Ait Tahlil Var mı?", shape=diamond, fillcolor="pink"];
+        Sonuc_Hazir [label="Sonuç Hazır mı?", shape=diamond];
+        Sonuc_Goster [label="Sonucu Görüntüle", shape=box];
+        PDF_Istek [label="PDF İndir?", shape=diamond];
+        PDF_Indir [label="PDF Oluştur/İndir", shape=box];
+        Bekle_Mesaj [label="Bekleme Mesajı Göster", shape=box];
+        Tahlil_Yok [label="Tahlil Bulunamadı Mesajı", shape=box];
+
+        Tahlil_Kontrol -> Sonuc_Hazir [label="EVET"];
+        Tahlil_Kontrol -> Tahlil_Yok [label="HAYIR"];
+        
+        Sonuc_Hazir -> Sonuc_Goster [label="EVET"];
+        Sonuc_Hazir -> Bekle_Mesaj [label="HAYIR"];
+
+        Sonuc_Goster -> PDF_Istek;
+        PDF_Istek -> PDF_Indir [label="EVET"];
+        PDF_Istek -> Tekrar_Sor [label="HAYIR"];
+
+        PDF_Indir -> Tekrar_Sor;
+        Bekle_Mesaj -> Tekrar_Sor;
+        Tahlil_Yok -> Tekrar_Sor;
+    }
+
+
+    // --- Geçersiz Seçim ve Ana Döngü Sonlandırma ---
+    Tahlil_Kontrol -> Tekrar_Sor [label="HAYIR, Geçersiz Seçim"];
+    
+    Tekrar_Sor [label="Başka İşlem Yapmak İster misiniz? (E/H)", shape=parallelogram, fillcolor="lightyellow"];
+
+    Tekrar_Sor -> Repeat [label="EVET (E)"];
+    Tekrar_Sor -> End [label="HAYIR (H)"];
+
+    // Eğer TC hatalıysa, tekrar sor döngüsüne gitmek için (Genellikle sistemlerde bu şekilde olur)
+    // Eğer sadece bir hata mesajıysa, sonraki akışa bağlanabilir.
+    TC_Kontrol -> Tekrar_Sor [label="HAYIR"];
+    
+}
