@@ -1,0 +1,57 @@
+digraph ATM_Para_Cekme_Sistemi {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    start [label="BAŞLA", shape=circle, width=0.3];
+    kart [label="Kart takıldı"];
+    pin_giris [label="PIN gir"];
+    pin_kontrol [label="PIN doğru mu?", shape=diamond];
+    pin_hata [label="PIN hatalı → Deneme sayısını artır"];
+    pin_bloke [label="3 hatalı giriş → Kart bloke"];
+    menu [label="Ana Menü:\n1-Bakiye Sorgu\n2-Para Çek\n3-Kart İade"];
+    secim [label="Seçim al"];
+    bakiye [label="Bakiye göster"];
+    tutar_gir [label="Çekilecek tutarı gir"];
+    bakiye_kontrol [label="Yetersiz bakiye?", shape=diamond];
+    kat_kontrol [label="Tutar 20 TL'nin katı mı?", shape=diamond];
+    limit_kontrol [label="Günlük limit aşıldı mı?", shape=diamond];
+    para_ver [label="Para ver ve fiş çıkar"];
+    bakiye_guncel [label="Bakiye güncelle"];
+    tekrar [label="Başka işlem ister misiniz?", shape=diamond];
+    kart_iade [label="Kart iade"];
+    bitir [label="BİTİR", shape=doublecircle];
+
+    // Akış bağlantıları
+    start -> kart -> pin_giris -> pin_kontrol;
+    pin_kontrol -> menu [label="Evet"];
+    pin_kontrol -> pin_hata [label="Hayır"];
+    pin_hata -> pin_kontrol [label="Deneme < 3"];
+    pin_hata -> pin_bloke [label="Deneme = 3"];
+    pin_bloke -> kart_iade -> bitir;
+
+    menu -> secim;
+
+    // Menü Seçimleri
+    secim -> bakiye [label="1"];
+    secim -> tutar_gir [label="2"];
+    secim -> kart_iade [label="3"];
+    bakiye -> tekrar;
+
+    // Para çekme akışı
+    tutar_gir -> bakiye_kontrol;
+    bakiye_kontrol -> kat_kontrol [label="Hayır"];
+    bakiye_kontrol -> kat_kontrol [label="Evet"];
+
+    kat_kontrol -> limit_kontrol [label="Evet"];
+    kat_kontrol -> tekrar [label="Hayır"];
+
+    limit_kontrol -> para_ver [label="Hayır"];
+    limit_kontrol -> tekrar [label="Evet"];
+
+    para_ver -> bakiye_guncel -> tekrar;
+
+    tekrar -> menu [label="Evet"];
+    tekrar -> kart_iade [label="Hayır"];
+
+    kart_iade -> bitir;
+}
