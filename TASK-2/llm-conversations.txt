@@ -1,0 +1,315 @@
+Online Alışveriş Sepet Sistemi
+
+için detaylı pseudocode yaz bana
+
+
+ 
+
+Kullanıcı giriş kontrolü (koşul)
+
+Ürün kategorileri arasında gezinme (döngü)
+
+Ürün sepete ekleme
+
+Stok kontrolü (koşul)
+
+Sepeti görüntüleme ve düzenleme (döngü)
+
+Indirim kodu uygulanabilir (koşul)
+
+Minimum 50 TL kontrolü (koşul)
+
+Kargo ücreti hesaplama (koşul: ¿200 TL ücretsiz)
+
+Ödeme yöntemi seçimi (koşul)
+
+Sipariş onayı
+Elbette! Aşağıda “Online Alışveriş Sepet Sistemi” için tüm istenen koşul ve döngüleri içeren detaylı, adım adım açıklamalı pseudocode (yani algoritma taslağı) verilmiştir:
+BAŞLA
+
+// --- 1. Kullanıcı Girişi ---
+EKRANA "Kullanıcı adı giriniz:" YAZ
+KULLANICI_ADI ← GİRİŞ
+EKRANA "Şifre giriniz:" YAZ
+SIFRE ← GİRİŞ
+
+EĞER (KULLANICI_ADI ve SIFRE doğruysa) İSE
+    EKRANA "Giriş başarılı, hoş geldiniz!" YAZ
+DEĞİLSE
+    EKRANA "Giriş başarısız. Lütfen tekrar deneyin." YAZ
+    PROGRAMI SONLANDIR
+BİTİŞ_EĞER
+
+
+// --- 2. Ürün Kategorilerinde Gezinme ---
+KATEGORİ_LISTESİ ← ["Elektronik", "Giyim", "Ev", "Kitap", "Kozmetik"]
+SEPET ← BOŞ_LİSTE
+
+TEKRARLA
+    EKRANA "Kategoriler: ", KATEGORİ_LISTESİ YAZ
+    EKRANA "Bir kategori seçin (veya 'çıkış' yazın): " YAZ
+    SEÇİLEN_KATEGORİ ← GİRİŞ
+
+    EĞER (SEÇİLEN_KATEGORİ == "çıkış") İSE
+        ÇIK
+    BİTİŞ_EĞER
+
+    // --- 3. Ürün Listeleme ve Sepete Ekleme ---
+    ÜRÜN_LISTESİ ← KATEGORİYE_GÖRE_ÜRÜNLERİ_GETİR(SEÇİLEN_KATEGORİ)
+
+    DÖNGÜ i = 1 → UZUNLUK(ÜRÜN_LISTESİ)
+        EKRANA i, " - ", ÜRÜN_LISTESİ[i].AD, " (", ÜRÜN_LISTESİ[i].FİYAT, " TL)" YAZ
+    SON_DÖNGÜ
+
+    EKRANA "Sepete eklemek istediğiniz ürün numarasını girin (veya 0 ile geçin): " YAZ
+    SECİM ← GİRİŞ
+
+    EĞER (SECİM == 0) İSE
+        DEVAM_ET
+    BİTİŞ_EĞER
+
+    SEÇİLEN_ÜRÜN ← ÜRÜN_LISTESİ[SECİM]
+
+    // --- 4. Stok Kontrolü ---
+    EĞER (SEÇİLEN_ÜRÜN.STOK > 0) İSE
+        SEPETE_EKLE(SEPET, SEÇİLEN_ÜRÜN)
+        SEÇİLEN_ÜRÜN.STOK ← SEÇİLEN_ÜRÜN.STOK - 1
+        EKRANA "Ürün sepete eklendi!" YAZ
+    DEĞİLSE
+        EKRANA "Üzgünüz, bu ürün stokta yok." YAZ
+    BİTİŞ_EĞER
+
+SON_TEKRARLA (KULLANICI çıkış diyene kadar)
+
+
+// --- 5. Sepeti Görüntüleme ve Düzenleme ---
+TEKRARLA
+    EKRANA "Sepetiniz:" YAZ
+    DÖNGÜ i = 1 → UZUNLUK(SEPET)
+        EKRANA i, " - ", SEPET[i].AD, " | ", SEPET[i].FİYAT, " TL" YAZ
+    SON_DÖNGÜ
+
+    EKRANA "Toplam: ", SEPET_TOPLAM_TUTAR(SEPET), " TL" YAZ
+    EKRANA "Düzenleme yapmak ister misiniz? (evet/hayır)" YAZ
+    CEVAP ← GİRİŞ
+
+    EĞER (CEVAP == "evet") İSE
+        EKRANA "Silmek istediğiniz ürün numarasını girin:" YAZ
+        SİL_NUM ← GİRİŞ
+        SEPETTEN_SİL(SEPET, SİL_NUM)
+    DEĞİLSE
+        ÇIK
+    BİTİŞ_EĞER
+SON_TEKRARLA (CEVAP == "hayır" olana kadar)
+
+
+// --- 6. İndirim Kodu Uygulama ---
+EKRANA "İndirim kodunuz var mı? (evet/hayır)" YAZ
+KOD_VAR ← GİRİŞ
+
+EĞER (KOD_VAR == "evet") İSE
+    EKRANA "İndirim kodunu girin:" YAZ
+    KOD ← GİRİŞ
+    EĞER (KOD == "INDIRIM10") İSE
+        İNDİRİM ← 0.10 * SEPET_TOPLAM_TUTAR(SEPET)
+    DEĞİLSE
+        İNDİRİM ← 0
+        EKRANA "Geçersiz kod." YAZ
+    BİTİŞ_EĞER
+DEĞİLSE
+    İNDİRİM ← 0
+BİTİŞ_EĞER
+
+TOPLAM_TUTAR ← SEPET_TOPLAM_TUTAR(SEPET) - İNDİRİM
+
+
+// --- 7. Minimum 50 TL Kontrolü ---
+EĞER (TOPLAM_TUTAR < 50) İSE
+    EKRANA "Minimum sipariş tutarı 50 TL olmalıdır." YAZ
+    PROGRAMI SONLANDIR
+BİTİŞ_EĞER
+
+
+// --- 8. Kargo Ücreti Hesaplama ---
+EĞER (TOPLAM_TUTAR >= 200) İSE
+    KARGO ← 0
+    EKRANA "200 TL üzeri ücretsiz kargo!" YAZ
+DEĞİLSE
+    KARGO ← 25
+    EKRANA "Kargo ücreti: 25 TL" YAZ
+BİTİŞ_EĞER
+
+GENEL_TOPLAM ← TOPLAM_TUTAR + KARGO
+
+
+// --- 9. Ödeme Yöntemi Seçimi ---
+EKRANA "Ödeme yöntemi seçin: (1) Kredi Kartı (2) Havale (3) Kapıda Ödeme" YAZ
+ODEME_SECIM ← GİRİŞ
+
+EĞER (ODEME_SECIM == 1) İSE
+    ODEME_YONTEMI ← "Kredi Kartı"
+EĞER (ODEME_SECIM == 2) İSE
+    ODEME_YONTEMI ← "Havale"
+EĞER (ODEME_SECIM == 3) İSE
+    ODEME_YONTEMI ← "Kapıda Ödeme"
+BİTİŞ_EĞERLER
+
+
+// --- 10. Sipariş Onayı ---
+EKRANA "Siparişi onaylıyor musunuz? (evet/hayır)" YAZ
+ONAY ← GİRİŞ
+
+EĞER (ONAY == "evet") İSE
+    EKRANA "Siparişiniz alınmıştır." YAZ
+    EKRANA "Toplam Tutar: ", GENEL_TOPLAM, " TL" YAZ
+    EKRANA "Ödeme Yöntemi: ", ODEME_YONTEMI YAZ
+DEĞİLSE
+    EKRANA "Sipariş iptal edildi." YAZ
+BİTİŞ_EĞER
+
+BİTİR
+🧩 Özellik Özeti:
+Özellik	Kullanılan Yapı
+Kullanıcı giriş kontrolü	if/else
+Kategorilerde gezinme	while / for döngüsü
+Ürün sepete ekleme	Listeye ekleme işlemi
+Stok kontrolü	if koşulu
+Sepeti görüntüleme/düzenleme	Döngü + koşul
+İndirim kodu	if koşulu
+Minimum 50 TL kontrolü	if koşulu
+Kargo hesaplama	if koşulu
+Ödeme yöntemi seçimi	if yapısı
+Sipariş onayı	if koşulu
+İstersen bu pseudocode’u Python veya C# koduna dönüştürülmüş haliyle de yazabilirim.
+Hangisini istersin?
+
+Şunu dedin:
+“Bu pseudocode’u Graphviz DOT diline çevir.”
+ChatGPT:
+
+Harika 👍
+Aşağıda yukarıda verdiğim Online Alışveriş Sepet Sistemi pseudocode’unun Graphviz DOT diline çevrilmiş hali yer alıyor.
+Bu DOT dosyasını .dot uzantısıyla kaydedip, dot -Tpng dosya.dot -o cikti.png komutu ile bir akış diyagramı (flowchart)
+oluşturabilirsin.
+digraph OnlineAlisverisSepeti {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontsize=10];
+
+    Start [label="BAŞLA", shape=circle, style=filled, fillcolor=lightgreen];
+
+    // Kullanıcı Girişi
+    Login [label="Kullanıcı adı ve şifre al"];
+    CheckLogin [label="Giriş bilgileri doğru mu?", shape=diamond];
+    LoginSuccess [label="Giriş başarılı"];
+    LoginFail [label="Giriş başarısız\nProgram sonlanır", shape=box, fillcolor=lightcoral, style=filled];
+
+    // Kategori Seçimi
+    CategoryLoop [label="Kategori seçimi\nyada 'çıkış' yaz"];
+    ExitCheck [label="Kullanıcı 'çıkış' mı dedi?", shape=diamond];
+    ProductList [label="Seçilen kategorideki ürünleri listele"];
+
+    // Ürün Seçimi
+    ProductSelect [label="Ürün numarası gir (0 geç)"];
+    SkipCheck [label="0 mı girildi?", shape=diamond];
+    StockCheck [label="Ürün stokta var mı?", shape=diamond];
+    AddToCart [label="Ürün sepete eklendi"];
+    NoStock [label="Stok yok, mesaj göster"];
+
+    // Sepet Görüntüleme ve Düzenleme
+    ViewCart [label="Sepeti görüntüle"];
+    EditCheck [label="Düzenleme yapmak istiyor mu?", shape=diamond];
+    RemoveItem [label="Ürün sil"];
+
+    // İndirim Kodu
+    DiscountAsk [label="İndirim kodu var mı?", shape=diamond];
+    DiscountCode [label="Kodu gir"];
+    ValidCode [label="Kod geçerli mi?", shape=diamond];
+    ApplyDiscount [label="%10 indirim uygula"];
+    NoDiscount [label="Geçersiz kod veya yok"];
+
+    // Minimum 50 TL Kontrolü
+    MinCheck [label="Toplam >= 50 TL mi?", shape=diamond];
+    MinFail [label="Sipariş reddedildi"];
+
+    // Kargo Ücreti
+    CargoCheck [label="Toplam >= 200 TL mi?", shape=diamond];
+    FreeCargo [label="Kargo: Ücretsiz"];
+    PaidCargo [label="Kargo: 25 TL"];
+
+    // Ödeme Yöntemi
+    Payment [label="Ödeme yöntemi seç\n(1: Kart, 2: Havale, 3: Kapıda)"];
+
+    // Sipariş Onayı
+    Confirm [label="Sipariş onaylıyor mu?", shape=diamond];
+    ConfirmYes [label="Sipariş alındı"];
+    ConfirmNo [label="Sipariş iptal edildi"];
+
+    End [label="BİTİR", shape=doublecircle, style=filled, fillcolor=lightgrey];
+
+    // Connections
+    Start -> Login -> CheckLogin;
+    CheckLogin -> LoginSuccess [label="Evet"];
+    CheckLogin -> LoginFail [label="Hayır"];
+    LoginSuccess -> CategoryLoop;
+    CategoryLoop -> ExitCheck;
+    ExitCheck -> End [label="Evet"];
+    ExitCheck -> ProductList [label="Hayır"];
+    ProductList -> ProductSelect -> SkipCheck;
+    SkipCheck -> CategoryLoop [label="Evet"];
+    SkipCheck -> StockCheck [label="Hayır"];
+    StockCheck -> AddToCart [label="Evet"];
+    StockCheck -> NoStock [label="Hayır"];
+    AddToCart -> CategoryLoop;
+    NoStock -> CategoryLoop;
+
+    // After user exits
+    CategoryLoop -> ViewCart [label="Çıkış"];
+    ViewCart -> EditCheck;
+    EditCheck -> RemoveItem [label="Evet"];
+    EditCheck -> DiscountAsk [label="Hayır"];
+    RemoveItem -> ViewCart;
+
+    DiscountAsk -> DiscountCode [label="Evet"];
+    DiscountAsk -> NoDiscount [label="Hayır"];
+    DiscountCode -> ValidCode;
+    ValidCode -> ApplyDiscount [label="Evet"];
+    ValidCode -> NoDiscount [label="Hayır"];
+    ApplyDiscount -> MinCheck;
+    NoDiscount -> MinCheck;
+
+    MinCheck -> CargoCheck [label="Evet"];
+    MinCheck -> MinFail [label="Hayır"];
+    MinFail -> End;
+
+    CargoCheck -> FreeCargo [label="Evet"];
+    CargoCheck -> PaidCargo [label="Hayır"];
+    FreeCargo -> Payment;
+    PaidCargo -> Payment;
+
+    Payment -> Confirm;
+    Confirm -> ConfirmYes [label="Evet"];
+    Confirm -> ConfirmNo [label="Hayır"];
+    ConfirmYes -> End;
+    ConfirmNo -> End;
+}
+🎯 Nasıl Kullanılır:
+
+Yukarıdaki metni alisveris.dot olarak kaydet.
+
+Terminalde şu komutu çalıştır:
+
+dot -Tpng alisveris.dot -o alisveris.png
+
+
+Ortaya çıkan akış diyagramı, tüm sistem akışını görsel olarak gösterecektir.
+
+İstersen ben bu DOT’tan senin için doğrudan bir akış diyagramı resmi (PNG) de oluşturabilirim.
+İster misin görselini de oluşturmam?
+sistemin kısa açıklaması (maks. 5-6 satır)
+ChatGPT:
+
+Bu sistem, kullanıcı giriş kontrolüyle başlayan bir online alışveriş sepeti yönetim uygulamasıdır.
+Kullanıcı, ürün kategorileri arasında gezip ürünleri sepete ekleyebilir ve stok durumu kontrol edilir.
+Sepet görüntülenip düzenlenebilir, geçerli bir indirim kodu uygulanabilir.
+Toplam tutar 50 TL’nin altındaysa sipariş reddedilir, 200 TL üzeri alışverişlerde kargo ücretsizdir.
+Kullanıcı ödeme yöntemini seçer ve onay verirse sipariş başarıyla tamamlanır.
