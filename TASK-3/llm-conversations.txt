@@ -1,0 +1,259 @@
+Hastane Randevu ve Tahlil Sistemi
+
+için pseudocode yaz bana
+
+
+
+
+
+Hasta kimlik doğrulama (TC No)
+
+İşlem seçimi: 1-Randevu Al, 2-Tahlil Sonucu Gor (koşul)
+
+Randevu modülü: Poliklinik seçimi, doktor listesi, uygun saatler (döngü)
+
+Randevu onayı ve SMS gönderimi
+
+Tahlil modülü: Tahlil var mı kontrolü (kosul)
+
+Sonuç hazır mı kontrolü (koşul)
+
+Sonuç görüntüleme veya bekleme mesajı
+
+Sonuçian PDF indir seçeneği
+
+Başka işlem yapmak ister misiniz? (döngü)
+Merhaba, Hastane Randevu ve Tahlil Sistemi için Türkçe olarak istediğiniz pseudocode aşağıdadır. Bu yapı, belirttiğiniz adımları mantıksal bir sıra ile takip eder.
+
+Merhaba, **Hastane Randevu ve Tahlil Sistemi** için Türkçe olarak istediğiniz pseudocode aşağıdadır. Bu yapı, belirttiğiniz adımları mantıksal bir sıra ile takip eder.
+
+-----
+
+## Hastane Randevu ve Tahlil Sistemi Pseudocode
+
+```
+BAŞLA
+
+  // Sistemin ana döngüsü
+  TEKRARLA
+    // Hasta kimlik doğrulama
+    EKRANA_YAZ "Hoş geldiniz. Lütfen TC Kimlik numaranızı giriniz:"
+    TC_NO = KULLANICIDAN_GİRİŞ_AL
+
+    EĞER TC_NO_VERİTABANINDA_VARSA(TC_NO) İSE
+      EKRANA_YAZ "Kimlik doğrulama başarılı. Lütfen yapmak istediğiniz işlemi seçiniz:"
+      EKRANA_YAZ "1- Randevu Al"
+      EKRANA_YAZ "2- Tahlil Sonuçlarını Görüntüle"
+      ISLEM_SECIMI = KULLANICIDAN_GİRİŞ_AL
+
+      // İşlem seçimine göre yönlendirme
+      EĞER ISLEM_SECIMI == 1 İSE
+        // Randevu Alma Modülü
+        RANDevu_AL()
+      YOKSA EĞER ISLEM_SECIMI == 2 İSE
+        // Tahlil Sonucu Görüntüleme Modülü
+        TAHLIL_SONUCU_GORUNTULE(TC_NO)
+      YOKSA
+        EKRANA_YAZ "Geçersiz işlem seçimi. Lütfen 1 veya 2 giriniz."
+      SON_EĞER
+    YOKSA
+      EKRANA_YAZ "Hatalı veya sistemde kayıtlı olmayan TC Kimlik numarası. Lütfen tekrar deneyiniz."
+    SON_EĞER
+
+    // Başka bir işlem yapma seçeneği
+    EKRANA_YAZ "Başka bir işlem yapmak istiyor musunuz? (E/H)"
+    DEVAM_SECIMI = KULLANICIDAN_GİRİŞ_AL
+  BİTENE_KADAR (DEVAM_SECIMI == 'H' veya DEVAM_SECIMI == 'h')
+
+SON
+
+// --- Fonksiyonlar ---
+
+FONKSİYON RANDevu_AL()
+  // Poliklinik seçimi
+  EKRANA_YAZ "Randevu almak istediğiniz polikliniği seçiniz:"
+  POLIKLINIK_LISTESI_GETIR_VE_GOSTER()
+  POLIKLINIK_SECIMI = KULLANICIDAN_GİRİŞ_AL
+
+  // Doktor listesini gösterme
+  TEKRARLA
+    EKRANA_YAZ "Randevu almak istediğiniz doktoru seçiniz:"
+    DOKTOR_LISTESI_GETIR_VE_GOSTER(POLIKLINIK_SECIMI)
+    DOKTOR_SECIMI = KULLANICIDAN_GİRİŞ_AL
+  BİTENE_KADAR DOKTOR_SECIMI_GECERLI_Mİ(DOKTOR_SECIMI)
+
+  // Uygun saatleri bulma ve gösterme
+  TEKRARLA
+    EKRANA_YAZ "Uygun randevu saatleri aşağıdadır:"
+    UYGUN_SAATLERI_GETIR_VE_GOSTER(DOKTOR_SECIMI)
+    SAAT_SECIMI = KULLANICIDAN_GİRİŞ_AL
+  BİTENE_KADAR SAAT_SECIMI_GECERLI_Mİ(SAAT_SECIMI)
+
+  // Randevu onayı
+  EKRANA_YAZ "Randevuyu onaylamak için 'EVET' yazın:"
+  ONAY = KULLANICIDAN_GİRİŞ_AL
+  EĞER ONAY == "EVET" İSE
+    VERITABANINA_RANDEVU_YAZ(TC_NO, DOKTOR_SECIMI, SAAT_SECIMI)
+    SMS_GONDER(TC_NO, "Randevunuz oluşturulmuştur...")
+    EKRANA_YAZ "Randevunuz başarıyla oluşturulmuştur. Bilgiler SMS olarak gönderilmiştir."
+  YOKSA
+    EKRANA_YAZ "Randevu alma işlemi iptal edilmiştir."
+  SON_EĞER
+SON_FONKSİYON
+
+FONKSİYON TAHLIL_SONUCU_GORUNTULE(TC_NO)
+  // Tahlil kontrolü
+  EĞER HASTAYA_AIT_TAHLIL_VAR_MI(TC_NO) İSE
+    // Sonuç hazır mı kontrolü
+    EĞER SONUC_HAZIR_MI(TC_NO) İSE
+      EKRANA_YAZ "Tahlil sonuçlarınız aşağıdadır:"
+      TAHLIL_SONUCLARINI_EKRANA_YAZDIR(TC_NO)
+
+      // PDF indirme seçeneği
+      EKRANA_YAZ "Tahlil sonuçlarını PDF olarak indirmek ister misiniz? (E/H)"
+      PDF_SECIMI = KULLANICIDAN_GİRİŞ_AL
+      EĞER PDF_SECIMI == 'E' veya PDF_SECIMI == 'e' İSE
+        TAHLIL_SONUCU_PDF_OLARAK_INDIR(TC_NO)
+        EKRANA_YAZ "PDF indirme işlemi başlatıldı."
+      SON_EĞER
+    YOKSA
+      EKRANA_YAZ "Tahlil sonuçlarınız henüz hazır değil. Lütfen daha sonra tekrar kontrol ediniz."
+    SON_EĞER
+  YOKSA
+    EKRANA_YAZ "Sistemde adınıza kayıtlı bir tahlil sonucu bulunmamaktadır."
+  SON_EĞER
+SON_FONKSİYON
+```
+Elbette, size yardımcı olmaktan memnuniyet duyarım.
+
+Sanırım klavyenizde sadece 'A' harfine bastınız.
+
+Ne hakkında konuşmak istersiniz?
+
+Daha önce "Hastane Randevu ve Tahlil Sistemi" için bir pseudocode yazmıştık. Eğer bununla ilgili bir sorunuz varsa veya başka bir konuda yardıma ihtiyacınız varsa, lütfen belirtin.
+Dot graphiz koduna çevir
+
+
+Dot Graphviz formatına çevirmek için, pseudocode'daki adımları ve koşulları temsil eden düğümler (nodes) ve aralarındaki akışı (edges) kullanmalıyız.
+
+Aşağıda, verdiğiniz pseudocode'un mantıksal akışını gösteren Dot Graphviz kodu bulunmaktadır
+digraph HastaneSistemi {
+    // Grafiğin genel ayarları
+    rankdir=TB; // Yukarıdan aşağıya akış (Top to Bottom)
+    node [shape=box, style="filled", fillcolor="lightblue"]; // Düğüm varsayılan ayarları
+
+    // Başlangıç ve Bitiş Düğümleri
+    Start [label="BAŞLA", shape=oval, fillcolor="lightgreen"];
+    End [label="BİTİŞ", shape=oval, fillcolor="red"];
+
+    // Ana Döngü
+    Repeat [label="TEKRARLA: Ana Döngü", shape=rect, fillcolor="lightyellow"];
+    Start -> Repeat;
+
+    // Kimlik Doğrulama
+    TC_Gir [label="TC Kimlik No Gir", shape=parallelogram];
+    Repeat -> TC_Gir;
+
+    TC_Kontrol [label="TC NO Veritabanında Var mı?", shape=diamond, fillcolor="pink"];
+    TC_Gir -> TC_Kontrol;
+
+    // TC Doğruysa Akış
+    TC_Kontrol -> Islemler [label="EVET"];
+    Islemler [label="İşlem Seçimi (1-Randevu, 2-Tahlil)", shape=parallelogram];
+
+    // İşlem Kontrolü
+    Islem_Secim [label="Seçim = 1 mi?", shape=diamond, fillcolor="pink"];
+    Islemler -> Islem_Secim;
+    
+    // Geçersiz TC Akışı
+    TC_Kontrol -> Tekrar_Sor [label="HAYIR"];
+
+    // --- Randevu Modülü (Seçim 1) ---
+    Islem_Secim -> Randevu_AL_Func [label="EVET"];
+    
+    subgraph cluster_randevu {
+        label = "Randevu Alma Modülü";
+        style = "filled";
+        color = "grey";
+        
+        Randevu_AL_Func [label="Poliklinik Seçimi\nve Doktor Listesi", shape=box];
+        Saat_Bul [label="Uygun Saatleri Bul\n(Döngü)", shape=box];
+        Onay [label="Randevu Onayı?", shape=diamond];
+        SMS_Gonder [label="Randevu Kayıt & SMS Gönderimi", shape=box];
+        Iptal [label="Randevu İptal", shape=box];
+
+        Randevu_AL_Func -> Saat_Bul;
+        Saat_Bul -> Onay;
+        Onay -> SMS_Gonder [label="EVET"];
+        Onay -> Iptal [label="HAYIR"];
+        
+        SMS_Gonder -> Tekrar_Sor;
+        Iptal -> Tekrar_Sor;
+    }
+
+
+    // --- Tahlil Modülü (Seçim 2) ---
+    Islem_Secim -> Tahlil_Kontrol [label="HAYIR, Seçim = 2 mi?"];
+    
+    subgraph cluster_tahlil {
+        label = "Tahlil Sonucu Görüntüleme Modülü";
+        style = "filled";
+        color = "grey";
+
+        Tahlil_Kontrol [label="Hastaya Ait Tahlil Var mı?", shape=diamond, fillcolor="pink"];
+        Sonuc_Hazir [label="Sonuç Hazır mı?", shape=diamond];
+        Sonuc_Goster [label="Sonucu Görüntüle", shape=box];
+        PDF_Istek [label="PDF İndir?", shape=diamond];
+        PDF_Indir [label="PDF Oluştur/İndir", shape=box];
+        Bekle_Mesaj [label="Bekleme Mesajı Göster", shape=box];
+        Tahlil_Yok [label="Tahlil Bulunamadı Mesajı", shape=box];
+
+        Tahlil_Kontrol -> Sonuc_Hazir [label="EVET"];
+        Tahlil_Kontrol -> Tahlil_Yok [label="HAYIR"];
+        
+        Sonuc_Hazir -> Sonuc_Goster [label="EVET"];
+        Sonuc_Hazir -> Bekle_Mesaj [label="HAYIR"];
+
+        Sonuc_Goster -> PDF_Istek;
+        PDF_Istek -> PDF_Indir [label="EVET"];
+        PDF_Istek -> Tekrar_Sor [label="HAYIR"];
+
+        PDF_Indir -> Tekrar_Sor;
+        Bekle_Mesaj -> Tekrar_Sor;
+        Tahlil_Yok -> Tekrar_Sor;
+    }
+
+
+    // --- Geçersiz Seçim ve Ana Döngü Sonlandırma ---
+    Tahlil_Kontrol -> Tekrar_Sor [label="HAYIR, Geçersiz Seçim"];
+    
+    Tekrar_Sor [label="Başka İşlem Yapmak İster misiniz? (E/H)", shape=parallelogram, fillcolor="lightyellow"];
+
+    Tekrar_Sor -> Repeat [label="EVET (E)"];
+    Tekrar_Sor -> End [label="HAYIR (H)"];
+
+    // Eğer TC hatalıysa, tekrar sor döngüsüne gitmek için (Genellikle sistemlerde bu şekilde olur)
+    // Eğer sadece bir hata mesajıysa, sonraki akışa bağlanabilir.
+    TC_Kontrol -> Tekrar_Sor [label="HAYIR"];
+    
+}
+Nasıl Kullanılır?
+Bu kodu bir metin dosyasına kaydedin (örneğin: sistem.dot).
+
+Graphviz programını kullanarak bu dosyayı bir görsel grafiğe dönüştürebilirsiniz. Örneğin, komut satırında:
+
+Bash
+
+dot -Tpng sistem.dot -o sistem.png
+Bu komut, akış şemasını temsil eden bir sistem.png dosyası oluşturacaktır.
+
+
+
+
+
+
+
+
+sistemin kısa açıklaması (maks. 5-6 satır)
+
+
