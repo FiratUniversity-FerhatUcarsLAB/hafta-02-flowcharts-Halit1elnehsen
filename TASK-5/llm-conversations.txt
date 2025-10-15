@@ -1,0 +1,159 @@
+Akıllı Ev Güvenlik Sistemi
+
+için pseudocode yaz bana
+
+Sensör okuma döngüsü (döngü - sürekli)
+
+Hareket sensörü kontrolü (koşul)
+
+Kapi/pencere sensörü kontrolü (koşul)
+
+Kamera aktivasyonu (koşul)
+
+Yanlış alarm kontrolü (ev sahibi evde mi?) (koşul)
+
+Alarm seviyesi belirleme (1-düşük, 2-orta, 3-yüksek) (koşul)
+
+Bildirim gönderme (SMS +App+ Email)
+
+Bekle ve tekrar kontrol et (döngü)
+
+Alarm sıfırlama veya devam ettirme (koşul)
+ChatGPT:
+
+Tabii! İşte Akıllı Ev Güvenlik Sistemi için istenen adımları içeren açıklayıcı bir pseudocode (sözde kod) örneği:
+🏠 Akıllı Ev Güvenlik Sistemi – Pseudocode
+BAŞLA
+
+SİSTEMİ başlat
+SENSÖRLERİ kalibre et
+KAMERA durumunu "PASİF" yap
+ALARM_DURUMU = "KAPALI"
+
+DÖNGÜ (SÜREKLİ)
+    HAREKET = hareket_sensörü_oku()
+    KAPI = kapi_sensörü_oku()
+    PENCERE = pencere_sensörü_oku()
+    EV_SAHİBİ_EVDE = ev_sahibi_kontrol()
+
+    EĞER (HAREKET = VAR) VEYA (KAPI = AÇIK) VEYA (PENCERE = AÇIK) İSE
+        KAMERA_AKTİF_ET()
+
+        EĞER (EV_SAHİBİ_EVDE = HAYIR) İSE
+            ALARM_SEVIYESI = alarm_seviyesi_belirle(HAREKET, KAPI, PENCERE)
+            ALARM_DURUMU = "AKTİF"
+            
+            EĞER (ALARM_SEVIYESI = 1) İSE
+                BİLDİRİM_GÖNDER("Düşük seviye alarm", "App")
+            DEĞİLSE EĞER (ALARM_SEVIYESI = 2) İSE
+                BİLDİRİM_GÖNDER("Orta seviye alarm", "SMS + App")
+            DEĞİLSE EĞER (ALARM_SEVIYESI = 3) İSE
+                BİLDİRİM_GÖNDER("Yüksek seviye alarm!", "SMS + App + Email")
+                SİREN_AKTİF_ET()
+            SON
+        DEĞİLSE
+            YANLIŞ_ALARM()
+            ALARM_DURUMU = "KAPALI"
+        SON
+    DEĞİLSE
+        KAMERA_DURUMU = "PASİF"
+        ALARM_DURUMU = "KAPALI"
+    SON
+
+    BEKLE(5 saniye)
+    ALARM_SIFIRLA_VEYA_DEVAM_ET()
+SON DÖNGÜ
+
+BİTİR
+
+🧠 Açıklamalar:
+
+DÖNGÜ (SÜREKLİ) → sistem 7/24 çalışır, sensörleri sürekli okur.
+
+EV_SAHİBİ_EVDE kontrolü → sistemin yanlış alarm üretmesini önler.
+
+ALARM_SEVİYESİ belirleme → örneğin sadece hareket varsa düşük, hareket + pencere açılmışsa yüksek olabilir.
+
+BİLDİRİM_GÖNDER() → seviyeye göre farklı kanallardan uyarı gönderir.
+
+BEKLE(5 saniye) → sistemi çok sık kontrol etmeyip, işlem yükünü azaltır.
+
+ALARM_SIFIRLA_VEYA_DEVAM_ET() → alarm sonrası sistemin yeniden hazır hale gelmesini sağlar.
+
+İstersen bu pseudocode’u Python, C++, ya da Arduino tarzında gerçek koda da dönüştürebilirim. Hangisini istersin?
+“Bu pseudocode’u Graphviz DOT diline çevir.”
+ChatGPT:
+
+Elbette! Aşağıda, verdiğim Akıllı Ev Güvenlik Sistemi pseudocode’unun Graphviz DOT (akış diyagramı) formatına çevrilmiş hali yer alıyor.
+Bu dosyayı .dot uzantısıyla kaydedip, örneğin dot -Tpng akilli_ev.dot -o akilli_ev.png komutuyla diyagram olarak oluşturabilirsin.
+
+🧩 Graphviz DOT kodu
+digraph AkilliEvGuvenlikSistemi {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Helvetica"];
+
+    START [label="Sistemi Başlat\nSensörleri Kalibre Et\nKamera: Pasif\nAlarm: Kapalı", shape=ellipse, style=filled, fillcolor=lightgrey];
+
+    LOOP [label="Döngü (Sürekli Sensör Okuma)"];
+    READ_SENSORS [label="Hareket, Kapı, Pencere Sensörlerini Oku\nEv Sahibi Evde mi?"];
+    CHECK_TRIGGER [label="Hareket VAR mı\nveya\nKapı/Pencere AÇIK mı?", shape=diamond];
+
+    CAMERA_ON [label="Kamera Aktif Et"];
+    OWNER_CHECK [label="Ev Sahibi Evde mi?", shape=diamond];
+    DETERMINE_LEVEL [label="Alarm Seviyesini Belirle\n(1, 2, 3)"];
+    ALARM_ACTIVE [label="Alarm Durumu: Aktif"];
+
+    LOW_ALERT [label="Düşük Seviye Alarm\nBildirim: App", shape=rectangle, style=dashed];
+    MID_ALERT [label="Orta Seviye Alarm\nBildirim: SMS + App", shape=rectangle, style=dashed];
+    HIGH_ALERT [label="Yüksek Seviye Alarm!\nBildirim: SMS + App + Email\nSireni Aktif Et", shape=rectangle, style=dashed];
+
+    FALSE_ALARM [label="Yanlış Alarm\n(Alarm Kapalı)", shape=rectangle, style=dotted];
+
+    CAMERA_OFF [label="Kamera: Pasif\nAlarm: Kapalı"];
+    WAIT [label="Bekle (5 saniye)"];
+    RESET_CHECK [label="Alarm Sıfırla veya Devam Et?", shape=diamond];
+    END_LOOP [label="Yeniden Sensör Okuma Döngüsü", shape=ellipse, style=filled, fillcolor=lightgrey];
+
+    // Connections
+    START -> LOOP;
+    LOOP -> READ_SENSORS -> CHECK_TRIGGER;
+
+    CHECK_TRIGGER -> CAMERA_ON [label="Evet"];
+    CHECK_TRIGGER -> CAMERA_OFF [label="Hayır"];
+
+    CAMERA_ON -> OWNER_CHECK;
+    OWNER_CHECK -> DETERMINE_LEVEL [label="Ev Sahibi Evde Değil"];
+    OWNER_CHECK -> FALSE_ALARM [label="Ev Sahibi Evde"];
+
+    DETERMINE_LEVEL -> LOW_ALERT [label="Seviye 1"];
+    DETERMINE_LEVEL -> MID_ALERT [label="Seviye 2"];
+    DETERMINE_LEVEL -> HIGH_ALERT [label="Seviye 3"];
+
+    LOW_ALERT -> ALARM_ACTIVE;
+    MID_ALERT -> ALARM_ACTIVE;
+    HIGH_ALERT -> ALARM_ACTIVE;
+
+    ALARM_ACTIVE -> WAIT;
+    FALSE_ALARM -> WAIT;
+    CAMERA_OFF -> WAIT;
+
+    WAIT -> RESET_CHECK;
+    RESET_CHECK -> END_LOOP [label="Devam Et"];
+    RESET_CHECK -> END_LOOP [label="Sıfırla"];
+
+    END_LOOP -> LOOP;
+}
+
+İstersen bu diyagramı görsel olarak PNG, SVG veya PDF şeklinde sana oluşturup gösterebilirim.
+İster misin diyagramı görsel olarak üretmemi (örneğin PNG biçiminde)?
+
+Şunu dedin:
+sistemin kısa açıklaması (maks. 5-6 satır)
+ChatGPT:
+
+Akıllı Ev Güvenlik Sistemi; evdeki hareket, kapı ve pencere sensörlerinden gelen verileri sürekli izleyen bir denetim sistemidir.
+Herhangi bir olağandışı durum algılandığında kamera etkinleştirilir ve ev sahibinin evde olup olmadığı kontrol edilir.
+Ev sahibi yoksa olayın ciddiyetine göre alarm seviyesi belirlenir (1–3 arası).
+Belirlenen seviyeye göre uygulama, SMS veya e-posta yoluyla bildirim gönderilir.
+Yanlış alarm durumunda sistem devre dışı kalır, aksi halde alarm aktif kalır.
+Sistem belirli aralıklarla sensörleri yeniden kontrol ederek sürekli güvenlik sağlar.
