@@ -1,0 +1,80 @@
+digraph DersKayitSistemi {
+    // Grafiğin genel ayarları
+    rankdir=TB; // Top to Bottom (Yukarıdan Aşağıya) akış
+    node [shape=box, style=filled, fillcolor=lightblue];
+    
+    // --- Düğümler (Adımlar) ---
+    
+    // Başlangıç/Bitiş
+    Baslangic [shape=Mdiamond, fillcolor=lightgreen, label="BAŞLA"];
+    Bitis [shape=Mdiamond, fillcolor=lightcoral, label="BİTİŞ"];
+
+    // Giriş Adımı
+    Giris [label="Öğrenci Girişi\n(No + Şifre Kontrolü)"];
+    
+    // Ana Döngü
+    ListeGoster [label="Mevcut Ders Listesini Görüntüle"];
+    Secim [shape=parallelogram, fillcolor=yellow, label="İşlem Seçimi:\nEkle / Çıkar / Onayla"];
+
+    // Ekleme Akışı
+    EkleDersSec [label="Eklenmek İstenen Dersi Seç"];
+    
+    // Koşullar (Karar Noktaları)
+    K1_Kontenjan [shape=diamond, fillcolor=khaki, label="Kontenjan Var mı?"];
+    K2_OnKosul [shape=diamond, fillcolor=khaki, label="Ön Koşullar Tamam mı?"];
+    K3_Zaman [shape=diamond, fillcolor=khaki, label="Zaman Çakışması Yok mu?"];
+    K4_Kredi [shape=diamond, fillcolor=khaki, label="Kredi Limiti (35) Aşılmadı mı?"];
+    
+    // İşlem Adımları
+    DersEkle [label="Dersi Listeye Ekle\n(Kredi ve Kontenjanı Güncelle)"];
+    DersCikar [label="Dersi Listeden Çıkar\n(Kredi ve Kontenjanı Güncelle)"];
+
+    // Onay ve Bitiş Akışı
+    KayitOzet [label="Kayıt Özeti Görüntüle"];
+    K5_GPA [shape=diamond, fillcolor=khaki, label="GPA < 2.5 mi?"];
+    DanismanOnay [label="Danışman Onayı Beklemede\n(Kayıt Durumu: Beklemede)"];
+    KayitOnaylandi [label="Kayıt Onaylandı\n(Veritabanı Güncellemesi)"];
+
+    // --- Bağlantılar (Akış) ---
+    
+    // Giriş Akışı
+    Baslangic -> Giris;
+
+    // Ana Döngü
+    Giris -> ListeGoster;
+    ListeGoster -> Secim;
+    
+    // İşlem Seçimleri
+    Secim -> EkleDersSec [label="Ekle"];
+    Secim -> DersCikar [label="Çıkar"];
+    Secim -> KayitOzet [label="Onayla"]; // Döngüden çıkış
+
+    // Ekleme Kontrolleri
+    EkleDersSec -> K1_Kontenjan;
+    
+    K1_Kontenjan -> K2_OnKosul [label="Evet"];
+    K1_Kontenjan -> ListeGoster [label="Hayır (Hata)", style=dotted, color=red];
+
+    K2_OnKosul -> K3_Zaman [label="Evet"];
+    K2_OnKosul -> ListeGoster [label="Hayır (Hata)", style=dotted, color=red];
+    
+    K3_Zaman -> K4_Kredi [label="Evet"];
+    K3_Zaman -> ListeGoster [label="Hayır (Hata)", style=dotted, color=red];
+    
+    K4_Kredi -> DersEkle [label="Evet"];
+    K4_Kredi -> ListeGoster [label="Hayır (Hata)", style=dotted, color=red];
+
+    // Ders Ekleme ve Çıkarma Sonrası Döngüye Dönüş
+    DersEkle -> ListeGoster;
+    DersCikar -> ListeGoster;
+    
+    // Onay Akışı (Danışman Kontrolü)
+    KayitOzet -> K5_GPA;
+    
+    K5_GPA -> DanismanOnay [label="Evet"]; // GPA < 2.5
+    K5_GPA -> KayitOnaylandi [label="Hayır"]; // GPA >= 2.5
+    
+    // Bitiş
+    DanismanOnay -> Bitis;
+    KayitOnaylandi -> Bitis;
+}
